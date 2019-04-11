@@ -1,0 +1,2 @@
+INSERT INTO organization(name, full_name, inn, kpp, address, is_active) VALUES ('test org','fullname1','somerandominn','whatiskppidonteven','someadress',true);
+INSERT INTO organization(name, full_name, inn, kpp, address, is_active) VALUES ('test org2','fullname2','somerandominn2','whatiskppidonteven2','someadress2',true);
