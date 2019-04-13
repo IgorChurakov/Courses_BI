@@ -10,10 +10,10 @@ import javax.persistence.*;
 public class Countries {
 
     @Id
-    private Integer code;
+    private Long code;
 
     @Version
-    private Integer version;
+    private Long version = 0L;
 
     @Column(nullable = false, unique = true, name = "name")
     private String name;

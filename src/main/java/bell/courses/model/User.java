@@ -7,7 +7,7 @@ import java.sql.Date;
 
 @Data
 @Entity(name = "User")
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -15,7 +15,7 @@ public class User {
     private Long id;
 
     @Version
-    private Integer version;
+    private Long version = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id")

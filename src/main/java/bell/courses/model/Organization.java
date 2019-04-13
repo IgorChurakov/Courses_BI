@@ -21,7 +21,7 @@ public class Organization implements Responseable {
     private Long id;
 
     @Version
-    private Integer version;
+    private Long version = 0L;
 
     @Column(nullable = false)
     private String name;
