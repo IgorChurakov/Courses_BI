@@ -14,7 +14,7 @@ public class Office {
     private Long id;
 
     @Version
-    private Long version = 0L;
+    private long version;
 
     @Column(nullable = false)
     private String name;
@@ -26,7 +26,7 @@ public class Office {
     private String phone;
 
     @Column(name = "is_active")
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "org_id")

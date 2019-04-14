@@ -10,10 +10,14 @@ import javax.persistence.*;
 public class Countries {
 
     @Id
-    private Long code;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Version
-    private Long version = 0L;
+    private long version;
+
+    @Column(nullable = false, name = "code")
+    private Integer code;
 
     @Column(nullable = false, unique = true, name = "name")
     private String name;

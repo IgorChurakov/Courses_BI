@@ -44,4 +44,15 @@ public class OrganizationController {
                                            @RequestParam(required = false) Boolean isActive) {
         return organizationDataService.update(id, name, fullName, inn, kpp, address, phone, isActive);
     }
+
+    @PostMapping(path = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Responseable saveOrganization(@RequestParam String name,
+                                         @RequestParam String fullName,
+                                         @RequestParam String inn,
+                                         @RequestParam String kpp,
+                                         @RequestParam String address,
+                                         @RequestParam(required = false) String phone,
+                                         @RequestParam(required = false) Boolean isActive) {
+        return organizationDataService.save(name,fullName,inn,kpp,address,phone,isActive);
+    }
 }

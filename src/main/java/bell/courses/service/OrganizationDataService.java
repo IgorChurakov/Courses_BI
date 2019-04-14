@@ -34,6 +34,21 @@ public class OrganizationDataService {
                 organization.getIsActive());
     }
 
+    private void setData(Organization organization,String name, String fullName, String inn, String kpp,
+                                 String address, String phone, Boolean isActive){
+        organization.setName(name);
+        organization.setFullName(fullName);
+        organization.setInn(inn);
+        organization.setKpp(kpp);
+        organization.setAddress(address);
+        if (phone != null) {
+            organization.setPhone(phone);
+        }
+        if (isActive != null) {
+            organization.setIsActive(isActive);
+        }
+    }
+
     public Responseable get(Long id) {
         Organization organization;
         try {
@@ -96,23 +111,30 @@ public class OrganizationDataService {
         if (requestedOrganization == null) {
             return new ErrorView("Organization with specified ID does not exist");
         }
-        requestedOrganization.setName(name);
-        requestedOrganization.setFullName(fullName);
-        requestedOrganization.setInn(inn);
-        requestedOrganization.setKpp(kpp);
-        requestedOrganization.setAddress(address);
-        if (phone != null) {
-            requestedOrganization.setPhone(phone);
-        }
-        if (isActive != null) {
-            requestedOrganization.setIsActive(isActive);
-        }
+
+        setData(requestedOrganization,name,fullName,inn,kpp,address,phone,isActive);
+
         try {
             organizationRepository.save(requestedOrganization);
         } catch (DataAccessException e) {
             log.error("Organization data updating error in update(id="+id+")", e);
             return new ErrorView("Internal Organization data updating error");
         }
+
+        return new ResultView("success");
+    }
+
+    public Responseable save(String name, String fullName, String inn, String kpp,
+                             String address, String phone, Boolean isActive){
+        Organization organization = new Organization();
+        setData(organization,name,fullName,inn,kpp,address,phone,isActive);
+        try {
+            organizationRepository.save(organization);
+        } catch (DataAccessException e) {
+            log.error("Organization data saving error in save(name="+name+")", e);
+            return new ErrorView("Internal Organization data saving error");
+        }
+
         return new ResultView("success");
     }
 }

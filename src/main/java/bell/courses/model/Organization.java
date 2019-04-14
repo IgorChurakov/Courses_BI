@@ -21,7 +21,7 @@ public class Organization implements Responseable {
     private Long id;
 
     @Version
-    private Long version = 0L;
+    private long version;
 
     @Column(nullable = false)
     private String name;
@@ -42,5 +42,5 @@ public class Organization implements Responseable {
     private String phone;
 
     @Column
-    private Boolean isActive = true;
+    private Boolean isActive;
 }

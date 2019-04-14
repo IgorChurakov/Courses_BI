@@ -3,7 +3,6 @@ package bell.courses.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.sql.Date;
 
 @Data
 @Entity(name = "User")
@@ -15,7 +14,7 @@ public class User {
     private Long id;
 
     @Version
-    private Long version = 0L;
+    private long version;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id")
@@ -36,21 +35,13 @@ public class User {
     @Column
     private String phone;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doc_code")
-    private Docs docCode;
+    private Document document;
 
-    @Column(name = "doc_name")
-    private String docName;
-
-    @Column(name = "doc_number")
-    private String docNumber;
-
-    @Column(name = "doc_date")
-    private Date docDate;
-
-    @Column(name = "citizenship_code")
-    private Integer citizenshipCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "citizenship_code")
+    private Countries country;
 
     @Column(name = "is_identified")
     private Boolean isIdentified;
