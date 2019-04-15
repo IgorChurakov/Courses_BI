@@ -5,7 +5,6 @@ import bell.courses.model.Organization;
 import bell.courses.view.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class OrganizationDataService {
         this.organizationRepository = organizationRepository;
     }
 
-    private OrganizationView wrapInView(Organization organization){
+    private OrganizationView wrapInView(Organization organization) {
         return new OrganizationView(
                 organization.getId(),
                 organization.getName(),
@@ -34,8 +33,8 @@ public class OrganizationDataService {
                 organization.getIsActive());
     }
 
-    private void setData(Organization organization,String name, String fullName, String inn, String kpp,
-                                 String address, String phone, Boolean isActive){
+    private void setData(Organization organization, String name, String fullName, String inn, String kpp,
+                         String address, String phone, Boolean isActive) {
         organization.setName(name);
         organization.setFullName(fullName);
         organization.setInn(inn);
@@ -49,92 +48,62 @@ public class OrganizationDataService {
         }
     }
 
-    public Responseable get(Long id) {
+    public ResponseView get(Long id) {
         Organization organization;
-        try {
-            organization = organizationRepository.getById(id);
-            if (organization == null) {
-                return new ErrorView("No organizations with specified ID found");
-            }
-        } catch (DataAccessException e) {
-            log.error("Organization data loading error in getById(id=" + id + ")", e);
-            return new ErrorView("Internal Organization data loading error");
+        organization = organizationRepository.getById(id);
+        if (organization == null) {
+            return new ErrorView("Organization with specified ID does not exist");
         }
         return wrapInView(organization);
     }
 
-    public List<Responseable> list(String name, String inn, Boolean isActive) {
-        List<Responseable> result = new ArrayList<>();
-        try {
-            List<Organization> organizations;
-            if (isActive == null) {
-                if (inn == null) {
-                    organizations = organizationRepository.findAllByNameContaining(name);
-                } else {
-                    organizations = organizationRepository.findAllByNameContainingAndInn(name, inn);
-                }
+    public List<ResponseView> list(String name, String inn, Boolean isActive) {
+        List<ResponseView> result = new ArrayList<>();
+        List<Organization> organizations;
+        if (isActive == null) {
+            if (inn == null) {
+                organizations = organizationRepository.findAllByNameContaining(name);
             } else {
-                if (inn == null) {
-                    organizations = organizationRepository.findAllByNameContainingAndIsActive(name, isActive);
-                } else {
-                    organizations = organizationRepository.findAllByNameContainingAndInnAndIsActive(name, inn, isActive);
-                }
+                organizations = organizationRepository.findAllByNameContainingAndInn(name, inn);
             }
-            if (organizations.isEmpty()) {
-                result.add(new ErrorView("No organizations with specified parameters were found"));
-                return result;
+        } else {
+            if (inn == null) {
+                organizations = organizationRepository.findAllByNameContainingAndIsActive(name, isActive);
             } else {
-                for (Organization organization : organizations) {
-                    result.add(new OrganizationListingView(
-                            organization.getId(),
-                            organization.getName(),
-                            organization.getIsActive()));
-                }
+                organizations = organizationRepository.findAllByNameContainingAndInnAndIsActive(name, inn, isActive);
             }
-        } catch (DataAccessException e) {
-            log.error("Organization data loading error in listByName(name=" + name + ")", e);
-            result.add(new ErrorView("Internal Organization data loading error"));
+        }
+        if (organizations.isEmpty()) {
+            result.add(new ErrorView("No organizations with specified parameters were found"));
             return result;
+        } else {
+            for (Organization organization : organizations) {
+                result.add(new OrganizationListingView(
+                        organization.getId(),
+                        organization.getName(),
+                        organization.getIsActive()));
+            }
         }
         return result;
     }
 
-    public Responseable update(Long id, String name, String fullName, String inn,
-                               String kpp, String address, String phone, Boolean isActive){
+    public ResponseView update(Long id, String name, String fullName, String inn,
+                               String kpp, String address, String phone, Boolean isActive) {
         Organization requestedOrganization;
-        try {
-            requestedOrganization = organizationRepository.getById(id);
-        } catch (DataAccessException e) {
-            log.error("Organization data loading error in update(id="+id+")", e);
-            return new ErrorView("Internal Organization data loading error");
-        }
+        requestedOrganization = organizationRepository.getById(id);
         if (requestedOrganization == null) {
             return new ErrorView("Organization with specified ID does not exist");
         }
-
-        setData(requestedOrganization,name,fullName,inn,kpp,address,phone,isActive);
-
-        try {
-            organizationRepository.save(requestedOrganization);
-        } catch (DataAccessException e) {
-            log.error("Organization data updating error in update(id="+id+")", e);
-            return new ErrorView("Internal Organization data updating error");
-        }
-
+        setData(requestedOrganization, name, fullName, inn, kpp, address, phone, isActive);
+        organizationRepository.save(requestedOrganization);
         return new ResultView("success");
     }
 
-    public Responseable save(String name, String fullName, String inn, String kpp,
-                             String address, String phone, Boolean isActive){
+    public ResponseView save(String name, String fullName, String inn, String kpp,
+                             String address, String phone, Boolean isActive) {
         Organization organization = new Organization();
-        setData(organization,name,fullName,inn,kpp,address,phone,isActive);
-        try {
-            organizationRepository.save(organization);
-        } catch (DataAccessException e) {
-            log.error("Organization data saving error in save(name="+name+")", e);
-            return new ErrorView("Internal Organization data saving error");
-        }
-
+        setData(organization, name, fullName, inn, kpp, address, phone, isActive);
+        organizationRepository.save(organization);
         return new ResultView("success");
     }
 }

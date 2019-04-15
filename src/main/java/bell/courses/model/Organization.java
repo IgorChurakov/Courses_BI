@@ -1,20 +1,13 @@
 package bell.courses.model;
 
-import bell.courses.view.Responseable;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Version;
-import javax.persistence.Column;
+import javax.persistence.*;
 
 @Data
 @Entity(name = "Organization")
 @Table(name = "organization")
-public class Organization implements Responseable {
+public class Organization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

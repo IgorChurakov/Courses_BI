@@ -1,67 +1,67 @@
-CREATE TABLE organization (
-  id bigint primary key auto_increment,
-  version bigint default 0,
-  name varchar(256) not null,
-  full_name varchar(256) not null,
-  inn varchar(256) not null,
-  kpp varchar(256) not null,
-  address varchar(256) not null,
-  phone varchar(256),
-  is_active boolean default true
+CREATE TABLE organization (               --Table of Organizations
+  id bigint primary key auto_increment,   --Organization's ID
+  version bigint default 0,               --Hibernate service field
+  name varchar(256) not null,             --Organization's Name
+  full_name varchar(256) not null,        --Organization's Full Name
+  inn varchar(256) not null,              --Organization's INN
+  kpp varchar(256) not null,              --Organization's KPP
+  address varchar(256) not null,          --Organization's Address
+  phone varchar(256),                     --Organization's Phone
+  is_active boolean default true          --Organization's Active State
 );
 
-CREATE TABLE office (
-  id bigint primary key auto_increment,
-  version bigint default 0,
-  org_id bigint not null,
-  name varchar(256) not null,
-  address varchar(256) not null,
-  phone varchar(256),
-  is_active boolean default true
+CREATE TABLE office (                     --Table of Offices
+  id bigint primary key auto_increment,   --Office's ID
+  version bigint default 0,               --Hibernate service field
+  org_id bigint not null,                 --Office's Organization Owner ID
+  name varchar(256) not null,             --Office's Name
+  address varchar(256) not null,          --Office's Address
+  phone varchar(256),                     --Office's Phone
+  is_active boolean default true          --Office's Active State
 );
 
-CREATE TABLE countries (
-  id bigint primary key,
-  version bigint default 0,
-  code integer not null,
-  name varchar(256) not null
+CREATE TABLE countries (                  --Countries Catalogue
+  id bigint primary key,                  --Country ID
+  version bigint default 0,               --Hibernate service field
+  code integer not null,                  --Country Code
+  name varchar(256) not null              --Country Name
 );
 
-CREATE TABLE docs (
-  id bigint primary key,
-  version bigint default 0,
-  code integer not null,
-  name varchar(256) not null
+CREATE TABLE doc_types (                  --Document Types Catalogue
+  id bigint primary key,                  --DocType's ID
+  version bigint default 0,               --Hibernate service field
+  code integer not null,                  --DocType's Code
+  name varchar(256) not null              --DocType's Name
 );
 
-CREATE TABLE document (
-  id bigint primary key,
-  version bigint default 0,
-  doc_type bigint not null,
-  user_id bigint not null,
-  doc_number varchar(10) not null,
-  doc_date date not null
+CREATE TABLE document (                   --Table of Documents
+  id bigint primary key,                  --Document's ID
+  version bigint default 0,               --Hibernate service field
+  doc_type bigint not null,               --Document's Type references doc_type(id)
+  user_id bigint not null,                --Document's Owner references users(id)
+  doc_number varchar(10) not null,        --Document's Number
+  doc_date date not null                  --Document's Date
 );
 
-CREATE TABLE users (
-  id bigint primary key auto_increment,
-  version bigint default 0,
-  office_id bigint not null,
-  first_name varchar(256) not null,
-  second_name varchar(256),
-  middle_name varchar(256),
-  position varchar(256) not null,
-  phone varchar(256),
-  doc_code bigint not null,
-  citizenship_code bigint not null,
-  is_identified boolean
+CREATE TABLE users (                      --Table of Users
+  id bigint primary key auto_increment,   --User's ID
+  version bigint default 0,               --Hibernate Service Field
+  office_id bigint not null,              --User's Current Office ID references office(id)
+  first_name varchar(256) not null,       --User's First Name
+  second_name varchar(256),               --User's Second Name
+  middle_name varchar(256),               --User's Middle Name
+  position varchar(256) not null,         --User's Position
+  phone varchar(256),                     --User's Phone
+  doc_code bigint not null,               --User's Document references document(id)
+  citizenship_code bigint not null,       --User's Citizenship references countries(id)
+  is_identified boolean                   --User's Identification State
 );
 
 create index IX_Office_Organization_Id on office(org_id);
 alter table office add foreign key (org_id) references organization(id);
 
 create index IX_Document_Doc_Type on document(doc_type);
-alter table document add foreign key (doc_type) references docs(id);
+alter table document add foreign key (doc_type) references doc_types(id);
 
 create index IX_Document_User_Id on document(user_id);
 alter table document add foreign key (user_id) references users(id);

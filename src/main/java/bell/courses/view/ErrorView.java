@@ -1,6 +1,6 @@
 package bell.courses.view;
 
-public class ErrorView implements Responseable {
+public class ErrorView implements ResponseView {
 
     private String error;
 

@@ -1,6 +1,6 @@
 package bell.courses.view;
 
-public class OrganizationView implements Responseable {
+public class OrganizationView implements ResponseView {
 
     private long id;
     private String name;
