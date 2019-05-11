@@ -1,22 +1,22 @@
 package bell.courses.view;
 
-public class OrganizationListingView implements ResponseView {
+public class OfficeListingView implements ResponseView {
 
-    private Long id;
+    private long id;
     private String name;
-    private Boolean isActive;
+    private boolean isActive;
 
-    public OrganizationListingView(Long id, String name, Boolean isActive) {
+    public OfficeListingView(long id, String name, boolean isActive) {
         this.id = id;
         this.name = name;
         this.isActive = isActive;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -28,11 +28,11 @@ public class OrganizationListingView implements ResponseView {
         this.name = name;
     }
 
-    public Boolean getIsActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean active) {
-        isActive = active;
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 }

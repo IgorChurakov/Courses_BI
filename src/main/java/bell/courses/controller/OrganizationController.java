@@ -5,7 +5,12 @@ import bell.courses.view.ResponseView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -14,7 +19,7 @@ import java.util.List;
 @RequestMapping(value = "api/organization", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrganizationController {
 
-    private OrganizationDataService organizationDataService;
+    private final OrganizationDataService organizationDataService;
 
     @Autowired
     OrganizationController(OrganizationDataService organizationDataService) {
@@ -53,6 +58,6 @@ public class OrganizationController {
                                          @RequestParam String address,
                                          @RequestParam(required = false) String phone,
                                          @RequestParam(required = false) Boolean isActive) {
-        return organizationDataService.save(name,fullName,inn,kpp,address,phone,isActive);
+        return organizationDataService.save(name, fullName, inn, kpp, address, phone, isActive);
     }
 }

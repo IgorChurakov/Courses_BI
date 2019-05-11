@@ -1,6 +1,8 @@
 package bell.courses.model;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -12,6 +14,7 @@ public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Version
@@ -22,7 +25,7 @@ public class Document {
     private DocTypes document;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "doc_number", nullable = false)

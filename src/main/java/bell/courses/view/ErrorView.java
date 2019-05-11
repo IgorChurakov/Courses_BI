@@ -4,7 +4,7 @@ public class ErrorView implements ResponseView {
 
     private String error;
 
-    public ErrorView(String error){
+    public ErrorView(String error) {
         this.error = error;
     }
 

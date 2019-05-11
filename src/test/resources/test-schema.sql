@@ -1,4 +1,4 @@
-CREATE TABLE organization (               --Table of Organizations
+CREATE TABLE IF NOT EXISTS organization (               --Table of Organizations
   id bigint primary key auto_increment,   --Organization's ID
   version bigint default 0,               --Hibernate service field
   name varchar(256) not null,             --Organization's Name
@@ -10,7 +10,7 @@ CREATE TABLE organization (               --Table of Organizations
   is_active boolean                       --Organization's Active State
 );
 
-CREATE TABLE office (                     --Table of Offices
+CREATE TABLE IF NOT EXISTS office (                     --Table of Offices
   id bigint primary key auto_increment,   --Office's ID
   version bigint default 0,               --Hibernate service field
   org_id bigint not null,                 --Office's Organization Owner ID
@@ -20,21 +20,21 @@ CREATE TABLE office (                     --Table of Offices
   is_active boolean                       --Office's Active State
 );
 
-CREATE TABLE countries (                  --Countries Catalogue
+CREATE TABLE IF NOT EXISTS countries (                  --Countries Catalogue
   id bigint primary key auto_increment,   --Country ID
   version bigint default 0,               --Hibernate service field
   code integer not null,                  --Country Code
   name varchar(256) not null              --Country Name
 );
 
-CREATE TABLE doc_types (                  --Document Types Catalogue
+CREATE TABLE IF NOT EXISTS doc_types (                  --Document Types Catalogue
   id bigint primary key auto_increment,   --DocType's ID
   version bigint default 0,               --Hibernate service field
   code integer not null,                  --DocType's Code
   name varchar(256) not null              --DocType's Name
 );
 
-CREATE TABLE document (                   --Table of Documents
+CREATE TABLE IF NOT EXISTS document (                   --Table of Documents
   id bigint primary key auto_increment,   --Document's ID
   version bigint default 0,               --Hibernate service field
   doc_type bigint not null,               --Document's Type references doc_type(id)
@@ -43,7 +43,7 @@ CREATE TABLE document (                   --Table of Documents
   doc_date date not null                  --Document's Date
 );
 
-CREATE TABLE users (                      --Table of Users
+CREATE TABLE IF NOT EXISTS users (                      --Table of Users
   id bigint primary key auto_increment,   --User's ID
   version bigint default 0,               --Hibernate Service Field
   office_id bigint not null,              --User's Current Office ID references office(id)
@@ -57,20 +57,17 @@ CREATE TABLE users (                      --Table of Users
   is_identified boolean                   --User's Identification State
 );
 
-create index IX_Office_Organization_Id on office(org_id);
+CREATE INDEX IF NOT EXISTS IX_Office_Organization_Id on office(org_id);
 alter table office add foreign key (org_id) references organization(id);
 
-create index IX_Document_Doc_Type on document(doc_type);
+CREATE INDEX IF NOT EXISTS IX_Document_Doc_Type on document(doc_type);
 alter table document add foreign key (doc_type) references doc_types(id);
 
-create index IX_Users_Office_Id on users(office_id);
+CREATE INDEX IF NOT EXISTS IX_Users_Office_Id on users(office_id);
 alter table users add foreign key (office_id) references office(id);
 
-create index IX_Users_Doc_Code on users(doc_code);
+CREATE INDEX IF NOT EXISTS IX_Users_Doc_Code on users(doc_code);
 alter table users add foreign key (doc_code) references document(id);
 
-create index IX_Users_Citizenship_Code on users(citizenship_code);
+CREATE INDEX IF NOT EXISTS IX_Users_Citizenship_Code on users(citizenship_code);
 alter table users add foreign key (citizenship_code) references countries(id);
-
-/*create index IX_Document_User_Id on document(user_id);
-alter table document add foreign key (user_id) references users(id);*/

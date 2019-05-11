@@ -1,6 +1,6 @@
-INSERT INTO organization(name, full_name, inn, kpp, address, is_active)
-VALUES ('Planet Express','Planet Express, Inc.','24135846856461635384','133769322','USA, NNY St., New New York, Main st., 13',true),
-       ('World of Wonder','World of Wonder, Inc.','68464654138496876123','694555228','Russian Federation, Moscow st., Moscow, Lenina st., 35',true);
+INSERT INTO organization(name, full_name, inn, kpp, address, phone, is_active)
+VALUES ('Planet Express','Planet Express, Inc.','24135846856461635384','133769322','USA, NNY St., New New York, Main st., 13','+79631596428',true),
+       ('World of Wonder','World of Wonder, Inc.','68464654138496876123','694555228','Russian Federation, Moscow st., Moscow, Lenina st., 35','+79245613298',true);
 
 
 INSERT INTO office(org_id,name,address,phone,is_active)
@@ -42,5 +42,5 @@ VALUES (1,'Alexey','Ivanov','Denisovich','Director','+79274569897',1,1,true),
        (3,'Steven','Rambo','Nocks','Advisor','+79315698745',5,7,true),
        (4,'Yuri','Gagarin','Alekseyevich','Head Courier','+79653652528',6,1,true);
 
-create index IX_Document_User_Id on document(user_id);
+CREATE INDEX IF NOT EXISTS IX_Document_User_Id on document(user_id);
 alter table document add foreign key (user_id) references users(id);
