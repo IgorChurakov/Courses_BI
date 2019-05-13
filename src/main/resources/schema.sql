@@ -3,8 +3,8 @@ CREATE TABLE organization (               --Table of Organizations
   version bigint default 0,               --Hibernate service field
   name varchar(256) not null,             --Organization's Name
   full_name varchar(256) not null,        --Organization's Full Name
-  inn varchar(256) not null,              --Organization's INN
-  kpp varchar(256) not null,              --Organization's KPP
+  inn varchar(64) not null,               --Organization's INN
+  kpp varchar(64) not null,               --Organization's KPP
   address varchar(256) not null,          --Organization's Address
   phone varchar(256),                     --Organization's Phone
   is_active boolean                       --Organization's Active State
@@ -38,7 +38,6 @@ CREATE TABLE document (                   --Table of Documents
   id bigint primary key auto_increment,   --Document's ID
   version bigint default 0,               --Hibernate service field
   doc_type bigint not null,               --Document's Type references doc_type(id)
-  user_id bigint not null,                --Document's Owner references users(id)
   doc_number varchar(64) not null,        --Document's Number
   doc_date date not null                  --Document's Date
 );
@@ -71,6 +70,3 @@ alter table users add foreign key (doc_code) references document(id);
 
 create index IX_Users_Citizenship_Code on users(citizenship_code);
 alter table users add foreign key (citizenship_code) references countries(id);
-
-/*create index IX_Document_User_Id on document(user_id);
-alter table document add foreign key (user_id) references users(id);*/

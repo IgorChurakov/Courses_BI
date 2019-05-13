@@ -2,28 +2,34 @@ package bell.courses.dao;
 
 import bell.courses.model.Office;
 import bell.courses.model.Organization;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Objects;
 
 @Repository
-public interface OfficeRepository extends CrudRepository<Office,Long> {
+public interface OfficeRepository extends CrudRepository<Office,Long>, JpaSpecificationExecutor<Office> {
     Office getById(Long id);
 
-    List<Office> findAllByOrganization(Organization organization);
+    static Specification<Office> hasOrganization(Organization organization) {
+        if (organization == null)
+            return null;
+        return (office, cq, cb) -> cb.equal(office.get("organization"), organization);
+    }
 
-    List<Office> findAllByOrganizationAndNameContaining(Organization organization, String name);
+    static Specification<Office> hasIsActive(Boolean isActive) {
+        if (isActive == null)
+            return null;
+        return (office, cq, cb) -> cb.equal(office.get("isActive"), isActive);
+    }
 
-    List<Office> findAllByOrganizationAndPhoneContaining(Organization organization, String phone);
+    static Specification<Office> nameContains(String name) {
+        return (office, cq, cb) -> cb.like(office.get("name"), "%" + Objects.requireNonNullElse(name, "") + "%");
+    }
 
-    List<Office> findAllByOrganizationAndNameContainingAndPhoneContaining(Organization organization, String name, String phone);
-
-    List<Office> findAllByOrganizationAndIsActive(Organization organization, Boolean isActive);
-
-    List<Office> findAllByOrganizationAndIsActiveAndNameContaining(Organization organization, Boolean isActive, String name);
-
-    List<Office> findAllByOrganizationAndIsActiveAndPhoneContaining(Organization organization, Boolean isActive, String phone);
-
-    List<Office> findAllByOrganizationAndIsActiveAndPhoneContainingAndNameContaining(Organization organization, Boolean isActive, String phone, String name);
+    static Specification<Office> phoneContains(String phone) {
+        return (office, cq, cb) -> cb.like(office.get("phone"), "%" + Objects.requireNonNullElse(phone, "") + "%");
+    }
 }

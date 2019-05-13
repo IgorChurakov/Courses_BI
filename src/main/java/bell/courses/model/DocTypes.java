@@ -29,6 +29,6 @@ public class DocTypes {
     @Column(nullable = false, name = "code")
     private Integer code;
 
-    @Column(nullable = false, unique = true, name = "name")
+    @Column(nullable = false, unique = true, name = "name", length = 256)
     private String name;
 }

@@ -26,22 +26,22 @@ public class Organization {
     @Version
     private long version;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 256)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 256)
     private String fullName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64)
     private String inn;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64)
     private String kpp;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 256)
     private String address;
 
-    @Column
+    @Column(length = 256)
     private String phone;
 
     @Column

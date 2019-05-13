@@ -22,13 +22,9 @@ public class Document {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doc_type", nullable = false)
-    private DocTypes document;
+    private DocTypes docType;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column(name = "doc_number", nullable = false)
+    @Column(name = "doc_number", nullable = false, length = 64)
     private String docNumber;
 
     @Column(name = "doc_date", nullable = false)

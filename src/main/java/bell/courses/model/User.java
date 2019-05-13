@@ -34,19 +34,19 @@ public class User {
     @JoinColumn(name = "office_id")
     private Office office;
 
-    @Column(nullable = false, name = "first_name")
+    @Column(nullable = false, name = "first_name", length = 256)
     private String firstName;
 
-    @Column(name = "second_name")
+    @Column(name = "second_name", length = 256)
     private String secondName;
 
-    @Column(name = "middle_name")
+    @Column(name = "middle_name", length = 256)
     private String middleName;
 
-    @Column(nullable = false, name = "position")
+    @Column(nullable = false, name = "position", length = 256)
     private String position;
 
-    @Column
+    @Column(length = 256)
     private String phone;
 
     @OneToOne(fetch = FetchType.LAZY)

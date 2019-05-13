@@ -29,13 +29,13 @@ public class Office {
     @Version
     private long version;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 256)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 256)
     private String address;
 
-    @Column
+    @Column(length = 256)
     private String phone;
 
     @Column(name = "is_active")

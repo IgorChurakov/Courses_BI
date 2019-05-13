@@ -9,11 +9,16 @@ import bell.courses.view.ResponseView;
 import bell.courses.view.ResultView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static bell.courses.dao.OrganizationRepository.hasInn;
+import static bell.courses.dao.OrganizationRepository.hasIsActive;
+import static bell.courses.dao.OrganizationRepository.nameContains;
 
 @Slf4j
 @Service
@@ -99,19 +104,11 @@ public class OrganizationDataService {
 
     private List<Organization> getOrganizationList(String name, String inn, Boolean isActive) {
         List<Organization> organizations;
-        if (isActive == null) {
-            if (inn == null) {
-                organizations = organizationRepository.findAllByNameContaining(name);
-            } else {
-                organizations = organizationRepository.findAllByNameContainingAndInn(name, inn);
-            }
-        } else {
-            if (inn == null) {
-                organizations = organizationRepository.findAllByNameContainingAndIsActive(name, isActive);
-            } else {
-                organizations = organizationRepository.findAllByNameContainingAndInnAndIsActive(name, inn, isActive);
-            }
-        }
+
+        organizations = organizationRepository.findAll(Specification.where(nameContains(name))
+                .and(hasInn(inn))
+                .and(hasIsActive(isActive)));
+
         return organizations;
     }
 }

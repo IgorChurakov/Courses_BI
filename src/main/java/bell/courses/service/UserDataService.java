@@ -16,12 +16,21 @@ import bell.courses.view.ResultView;
 import bell.courses.view.UserListingView;
 import bell.courses.view.UserView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static bell.courses.dao.UserRepository.firstNameContains;
+import static bell.courses.dao.UserRepository.hasCitizenship;
+import static bell.courses.dao.UserRepository.hasDocType;
+import static bell.courses.dao.UserRepository.hasOffice;
+import static bell.courses.dao.UserRepository.middleNameContains;
+import static bell.courses.dao.UserRepository.positionContains;
+import static bell.courses.dao.UserRepository.secondNameContains;
 
 @Service
 public class UserDataService {
@@ -58,7 +67,7 @@ public class UserDataService {
 
             Document document = user.getDocument();
             if (document != null){
-                docName = document.getDocument().getName();
+                docName = document.getDocType().getName();
                 docNumber = document.getDocNumber();
                 docDate = document.getDocDate();
             }
@@ -100,7 +109,11 @@ public class UserDataService {
 
         if (!users.isEmpty()) {
             for (User user : users) {
-                result.add(new UserListingView(user.getId(), user.getFirstName(), user.getSecondName(), user.getMiddleName(), user.getPosition()));
+                result.add(new UserListingView(user.getId(),
+                                               user.getFirstName(),
+                                               user.getSecondName(),
+                                               user.getMiddleName(),
+                                               user.getPosition()));
             }
         } else {
             throw new ApiException("No users with specified parameters found");
@@ -131,7 +144,7 @@ public class UserDataService {
                 middleName,
                 position,
                 phone,
-                Objects.requireNonNullElse(user.getDocument().getDocument().getCode(), null),
+                Objects.requireNonNullElse(user.getDocument().getDocType().getCode(), null),
                 docName,
                 docNumber,
                 docDate,
@@ -168,8 +181,6 @@ public class UserDataService {
                 citizenshipCode,
                 isIdentified);
         if (user.getDocument()!= null) {
-            user.getDocument().setUser(user);
-            user = userRepository.save(user);
             user.setDocument(documentRepository.save(user.getDocument()));
         }
         userRepository.save(user);
@@ -241,7 +252,7 @@ public class UserDataService {
             if (document == null) {
                 document = new Document();
             }
-            document.setDocument(docType);
+            document.setDocType(docType);
             user.setDocument(document);
         }
         if (docNumber != null) {
@@ -272,259 +283,13 @@ public class UserDataService {
                                    Integer docCode,
                                    Integer citizenshipCode) {
         List<User> users;
-        if (citizenshipCode == null) {
-            if (docCode == null) {
-                if (position == null) {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOffice(office);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContaining(office, firstName);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContaining(office, secondName);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContaining(office, firstName, secondName);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContaining(office, middleName);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContaining(office, firstName, middleName);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContaining(office, secondName, middleName);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContaining(office, firstName, secondName, middleName);
-                            }
-                        }
-                    }
-                } else {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndPositionContaining(office, position);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndPositionContaining(office, firstName, position);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndPositionContaining(office, secondName, position);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndPositionContaining(office, firstName, secondName, position);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContainingAndPositionContaining(office, middleName, position);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContainingAndPositionContaining(office, firstName, middleName, position);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContainingAndPositionContaining(office, secondName, middleName, position);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContainingAndPositionContaining(office, firstName, secondName, middleName, position);
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (position == null) {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndDocument_document_code(office, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndDocument_document_code(office, firstName, docCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndDocument_document_code(office, secondName, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndDocument_document_code(office, firstName, secondName, docCode);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContainingAndDocument_document_code(office, middleName, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContainingAndDocument_document_code(office, firstName, middleName, docCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContainingAndDocument_document_code(office, secondName, middleName, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContainingAndDocument_document_code(office, firstName, secondName, middleName, docCode);
-                            }
-                        }
-                    }
-                } else {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndPositionContainingAndDocument_document_code(office, position, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndPositionContainingAndDocument_document_code(office, firstName, position, docCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndPositionContainingAndDocument_document_code(office, secondName, position, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndPositionContainingAndDocument_document_code(office, firstName, secondName, position, docCode);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContainingAndPositionContainingAndDocument_document_code(office, middleName, position, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContainingAndPositionContainingAndDocument_document_code(office, firstName, middleName, position, docCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContainingAndPositionContainingAndDocument_document_code(office, secondName, middleName, position, docCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContainingAndPositionContainingAndDocument_document_code(office, firstName, secondName, middleName, position, docCode);
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            if (docCode == null) {
-                if (position == null) {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndCountry_Code(office, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndCountry_Code(office, firstName, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndCountry_Code(office, secondName, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndCountry_Code(office, firstName, secondName, citizenshipCode);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContainingAndCountry_Code(office, middleName, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContainingAndCountry_Code(office, firstName, middleName, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContainingAndCountry_Code(office, secondName, middleName, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContainingAndCountry_Code(office, firstName, secondName, middleName, citizenshipCode);
-                            }
-                        }
-                    }
-                } else {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndPositionContainingAndCountry_Code(office, position, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndPositionContainingAndCountry_Code(office, firstName, position, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndPositionContainingAndCountry_Code(office, secondName, position, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndPositionContainingAndCountry_Code(office, firstName, secondName, position, citizenshipCode);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContainingAndPositionContainingAndCountry_Code(office, middleName, position, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContainingAndPositionContainingAndCountry_Code(office, firstName, middleName, position, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContainingAndPositionContainingAndCountry_Code(office, secondName, middleName, position, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContainingAndPositionContainingAndCountry_Code(office, firstName, secondName, middleName, position, citizenshipCode);
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (position == null) {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndDocument_document_codeAndCountry_Code(office, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndDocument_document_codeAndCountry_Code(office, firstName, docCode, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndDocument_document_codeAndCountry_Code(office, secondName, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndDocument_document_codeAndCountry_Code(office, firstName, secondName, docCode, citizenshipCode);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContainingAndDocument_document_codeAndCountry_Code(office, middleName, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContainingAndDocument_document_codeAndCountry_Code(office, firstName, middleName, docCode, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContainingAndDocument_document_codeAndCountry_Code(office, secondName, middleName, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContainingAndDocument_document_codeAndCountry_Code(office, firstName, secondName, middleName, docCode, citizenshipCode);
-                            }
-                        }
-                    }
-                } else {
-                    if (middleName == null) {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndPositionContainingAndDocument_document_codeAndCountry_Code(office, position, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndPositionContainingAndDocument_document_codeAndCountry_Code(office, firstName, position, docCode, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndPositionContainingAndDocument_document_codeAndCountry_Code(office, secondName, position, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndPositionContainingAndDocument_document_codeAndCountry_Code(office, firstName, secondName, position, docCode, citizenshipCode);
-                            }
-                        }
-                    } else {
-                        if (secondName == null) {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndMiddleNameContainingAndPositionContainingAndDocument_document_codeAndCountry_Code(office, middleName, position, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndMiddleNameContainingAndPositionContainingAndDocument_document_codeAndCountry_Code(office, firstName, middleName, position, docCode, citizenshipCode);
-                            }
-                        } else {
-                            if (firstName == null) {
-                                users = userRepository.findAllByOfficeAndSecondNameContainingAndMiddleNameContainingAndPositionContainingAndDocument_document_codeAndCountry_Code(office, secondName, middleName, position, docCode, citizenshipCode);
-                            } else {
-                                users = userRepository.findAllByOfficeAndFirstNameContainingAndSecondNameContainingAndMiddleNameContainingAndPositionContainingAndDocument_document_codeAndCountry_Code(office, firstName, secondName, middleName, position, docCode, citizenshipCode);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        users = userRepository.findAll(Specification.where(hasOffice(office))
+                                                    .and(firstNameContains(firstName))
+                                                    .and(secondNameContains(secondName))
+                                                    .and(middleNameContains(middleName))
+                                                    .and(positionContains(position))
+                                                    .and(hasDocType(docCode))
+                                                    .and(hasCitizenship(citizenshipCode)));
         return users;
     }
 }

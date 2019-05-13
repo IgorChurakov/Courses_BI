@@ -7,11 +7,17 @@ import bell.courses.model.Organization;
 import bell.courses.view.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static bell.courses.dao.OfficeRepository.hasIsActive;
+import static bell.courses.dao.OfficeRepository.hasOrganization;
+import static bell.courses.dao.OfficeRepository.nameContains;
+import static bell.courses.dao.OfficeRepository.phoneContains;
 
 @Slf4j
 @Service
@@ -101,35 +107,10 @@ public class OfficeDataService {
 
     private List<Office> getOfficeList(Organization organization, String name, String phone, Boolean isActive) {
         List<Office> offices;
-        if (isActive == null) {
-            if (phone == null) {
-                if (name == null) {
-                    offices = officeRepository.findAllByOrganization(organization);
-                } else {
-                    offices = officeRepository.findAllByOrganizationAndNameContaining(organization, name);
-                }
-            } else {
-                if (name == null) {
-                    offices = officeRepository.findAllByOrganizationAndPhoneContaining(organization, phone);
-                } else {
-                    offices = officeRepository.findAllByOrganizationAndNameContainingAndPhoneContaining(organization, name, phone);
-                }
-            }
-        } else {
-            if (phone == null) {
-                if (name == null) {
-                    offices = officeRepository.findAllByOrganizationAndIsActive(organization, isActive);
-                } else {
-                    offices = officeRepository.findAllByOrganizationAndIsActiveAndNameContaining(organization, isActive, name);
-                }
-            } else {
-                if (name == null) {
-                    offices = officeRepository.findAllByOrganizationAndIsActiveAndPhoneContaining(organization, isActive, phone);
-                } else {
-                    offices = officeRepository.findAllByOrganizationAndIsActiveAndPhoneContainingAndNameContaining(organization, isActive, phone, name);
-                }
-            }
-        }
+        offices = officeRepository.findAll(Specification.where(hasOrganization(organization))
+                                                        .and(nameContains(name))
+                                                        .and(phoneContains(phone))
+                                                        .and(hasIsActive(isActive)));
         return offices;
     }
 }
