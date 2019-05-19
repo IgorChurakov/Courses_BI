@@ -1,7 +1,6 @@
-package bell.courses.view;
+package bell.courses.view.response;
 
-public class ResultView implements ResponseView {
-
+public class ResultView {
     private String result;
 
     public ResultView(String result) {

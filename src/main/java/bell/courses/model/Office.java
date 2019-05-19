@@ -1,5 +1,8 @@
 package bell.courses.model;
 
+import bell.courses.view.response.OfficeListingView;
+import bell.courses.view.response.OfficeView;
+import bell.courses.view.response.ResponseView;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -19,7 +22,7 @@ import javax.persistence.Version;
 @Data
 @Entity(name = "Office")
 @Table(name = "office")
-public class Office {
+public class Office implements ResponseView {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,4 +47,14 @@ public class Office {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "org_id")
     private Organization organization;
+
+    @Override
+    public OfficeView wrapInView() {
+        return new OfficeView(this.getId(), this.getName(), this.getAddress(), this.getPhone(), this.getIsActive());
+    }
+
+    @Override
+    public OfficeListingView wrapInListView() {
+        return new OfficeListingView(this.getId(),this.getName(),this.getIsActive());
+    }
 }

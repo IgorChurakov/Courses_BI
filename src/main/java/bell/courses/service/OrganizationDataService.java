@@ -1,18 +1,16 @@
 package bell.courses.service;
 
 import bell.courses.dao.OrganizationRepository;
+import bell.courses.error.ApiException;
 import bell.courses.model.Organization;
-import bell.courses.view.ApiException;
-import bell.courses.view.OrganizationListingView;
-import bell.courses.view.OrganizationView;
-import bell.courses.view.ResponseView;
-import bell.courses.view.ResultView;
+import bell.courses.view.request.OrganizationFilterView;
+import bell.courses.view.request.OrganizationSaveView;
+import bell.courses.view.request.OrganizationUpdateView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,62 +29,44 @@ public class OrganizationDataService {
         this.organizationRepository = organizationRepository;
     }
 
-    public ResponseView get(Long id) {
+    public Organization get(Long id) {
         Organization organization;
         organization = organizationRepository.getById(id);
         if (organization == null) {
             throw new ApiException("Organization with specified ID does not exist");
         }
-        return wrapInView(organization);
+        return organization;
     }
 
-    public List<ResponseView> list(String name, String inn, Boolean isActive) {
-        List<Organization> organizations = getOrganizationList(name, inn, isActive);
+    public List<Organization> list(OrganizationFilterView request) {
+        List<Organization> organizations = getOrganizationList(request.getName(), request.getInn(), request.getIsActive());
         if (organizations.isEmpty()) {
             throw new ApiException("No organizations with specified parameters were found");
         } else {
-            List<ResponseView> result = new ArrayList<>();
-            for (Organization organization : organizations) {
-                result.add(new OrganizationListingView(
-                        organization.getId(),
-                        organization.getName(),
-                        organization.getIsActive()));
-            }
-            return result;
+            return organizations;
         }
     }
 
-    public ResponseView update(Long id, String name, String fullName, String inn,
-                               String kpp, String address, String phone, Boolean isActive) {
+    @SuppressWarnings("Duplicates")
+    public Boolean update(OrganizationUpdateView request) {
         Organization requestedOrganization;
-        requestedOrganization = organizationRepository.getById(id);
+        requestedOrganization = organizationRepository.getById(request.getId());
         if (requestedOrganization == null) {
             throw new ApiException("Organization with specified ID does not exist");
         }
-        setData(requestedOrganization, name, fullName, inn, kpp, address, phone, isActive);
+        setData(requestedOrganization, request.getName(), request.getFullName(), request.getInn(), request.getKpp(), request.getAddress(), request.getPhone(), request.getIsActive());
         organizationRepository.save(requestedOrganization);
-        return new ResultView("success");
+        return true;
     }
 
-    public ResponseView save(String name, String fullName, String inn, String kpp,
-                             String address, String phone, Boolean isActive) {
+    @SuppressWarnings("Duplicates")
+    public Boolean save(OrganizationSaveView request) {
         Organization organization = new Organization();
-        setData(organization, name, fullName, inn, kpp, address, phone, isActive);
+        setData(organization, request.getName(), request.getFullName(), request.getInn(), request.getKpp(), request.getAddress(), request.getPhone(), request.getIsActive());
         organizationRepository.save(organization);
-        return new ResultView("success");
+        return true;
     }
 
-    private OrganizationView wrapInView(Organization organization) {
-        return new OrganizationView(
-                organization.getId(),
-                organization.getName(),
-                organization.getFullName(),
-                organization.getInn(),
-                organization.getKpp(),
-                organization.getAddress(),
-                organization.getPhone(),
-                organization.getIsActive());
-    }
 
     @SuppressWarnings("Duplicates")
     private void setData(Organization organization, String name, String fullName, String inn, String kpp,

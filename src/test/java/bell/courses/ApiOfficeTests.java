@@ -1,15 +1,19 @@
 package bell.courses;
 
+import bell.courses.view.request.OfficeFilterView;
+import bell.courses.view.request.OfficeSaveView;
+import bell.courses.view.request.OfficeUpdateView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 
+import static bell.courses.ApiTestSuite.convertToJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,7 +31,12 @@ public class ApiOfficeTests {
     @Test
     @Transactional
     public void listTest() throws Exception {
-        this.mvc.perform(post("/api/office/list").param("orgId", "2"))
+        OfficeFilterView request = new OfficeFilterView();
+        request.setOrgId((long)2);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/office/list").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value("3"))
                 .andExpect(jsonPath("$.[0].name").value("Office of Fantasies"))
@@ -49,11 +58,14 @@ public class ApiOfficeTests {
     @Test
     @Transactional
     public void simpleSaveTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("orgId","2");
-        params.add("name","Testers Office");
-        params.add("address","Test st.");
-        this.mvc.perform(post("/api/office/save").params(params))
+        OfficeSaveView request = new OfficeSaveView();
+        request.setOrgId((long)2);
+        request.setName("Testers Office");
+        request.setAddress("Test st.");
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/office/save").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -69,13 +81,16 @@ public class ApiOfficeTests {
     @Test
     @Transactional
     public void fullSaveTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("orgId","2");
-        params.add("name","The Testers Office");
-        params.add("address","Test st., Test Town");
-        params.add("phone","+7-962-56-62-632");
-        params.add("isActive","true");
-        this.mvc.perform(post("/api/office/save").params(params))
+        OfficeSaveView request = new OfficeSaveView();
+        request.setOrgId((long)2);
+        request.setName("The Testers Office");
+        request.setAddress("Test st., Test Town");
+        request.setPhone("+7-962-56-62-632");
+        request.setIsActive(true);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/office/save").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -92,11 +107,14 @@ public class ApiOfficeTests {
     @Test
     @Transactional
     public void simpleUpdateTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("id","2");
-        params.add("name","Testers Office");
-        params.add("address","Test st.");
-        this.mvc.perform(post("/api/office/update").params(params))
+        OfficeUpdateView request = new OfficeUpdateView();
+        request.setId((long)2);
+        request.setName("Testers Office");
+        request.setAddress("Test st.");
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/office/update").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -113,13 +131,16 @@ public class ApiOfficeTests {
     @Test
     @Transactional
     public void fullUpdateTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("id","3");
-        params.add("name","The Testers Office");
-        params.add("address","Test st., Test Town");
-        params.add("phone","+7-962-56-62-632");
-        params.add("isActive","false");
-        this.mvc.perform(post("/api/office/update").params(params))
+        OfficeUpdateView request = new OfficeUpdateView();
+        request.setId((long)3);
+        request.setName("The Testers Office");
+        request.setAddress("Test st., Test Town");
+        request.setPhone("+7-962-56-62-632");
+        request.setIsActive(false);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/office/update").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {

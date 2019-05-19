@@ -1,17 +1,21 @@
 package bell.courses.controller;
 
+import bell.courses.model.Organization;
 import bell.courses.service.OrganizationDataService;
-import bell.courses.view.ResponseView;
+import bell.courses.view.request.OrganizationFilterView;
+import bell.courses.view.request.OrganizationSaveView;
+import bell.courses.view.request.OrganizationUpdateView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -27,37 +31,22 @@ public class OrganizationController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseView getOrganization(@PathVariable long id) {
+    public Organization getOrganization(@PathVariable long id) {
         return organizationDataService.get(id);
     }
 
     @PostMapping(path = "/list")
-    public List<ResponseView> listOrganizations(@RequestParam String name,
-                                                @RequestParam(required = false) String inn,
-                                                @RequestParam(required = false) Boolean isActive) {
-        return organizationDataService.list(name, inn, isActive);
+    public List<Organization> listOrganizations(@RequestBody @Valid OrganizationFilterView organizationFilterView) {
+        return organizationDataService.list(organizationFilterView);
     }
 
     @PostMapping(path = "/update")
-    public ResponseView updateOrganization(@RequestParam Long id,
-                                           @RequestParam String name,
-                                           @RequestParam String fullName,
-                                           @RequestParam String inn,
-                                           @RequestParam String kpp,
-                                           @RequestParam String address,
-                                           @RequestParam(required = false) String phone,
-                                           @RequestParam(required = false) Boolean isActive) {
-        return organizationDataService.update(id, name, fullName, inn, kpp, address, phone, isActive);
+    public Boolean updateOrganization(@RequestBody @Valid OrganizationUpdateView organizationUpdateView) {
+        return organizationDataService.update(organizationUpdateView);
     }
 
     @PostMapping(path = "/save")
-    public ResponseView saveOrganization(@RequestParam String name,
-                                         @RequestParam String fullName,
-                                         @RequestParam String inn,
-                                         @RequestParam String kpp,
-                                         @RequestParam String address,
-                                         @RequestParam(required = false) String phone,
-                                         @RequestParam(required = false) Boolean isActive) {
-        return organizationDataService.save(name, fullName, inn, kpp, address, phone, isActive);
+    public Boolean saveOrganization(@RequestBody @Valid OrganizationSaveView organizationSaveView) {
+        return organizationDataService.save(organizationSaveView);
     }
 }

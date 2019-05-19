@@ -2,15 +2,17 @@ package bell.courses.service;
 
 import bell.courses.dao.OfficeRepository;
 import bell.courses.dao.OrganizationRepository;
+import bell.courses.error.ApiException;
 import bell.courses.model.Office;
 import bell.courses.model.Organization;
-import bell.courses.view.*;
+import bell.courses.view.request.OfficeFilterView;
+import bell.courses.view.request.OfficeSaveView;
+import bell.courses.view.request.OfficeUpdateView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,64 +35,48 @@ public class OfficeDataService {
     }
 
 
-    public ResponseView get(Long id) {
+    public Office get(Long id) {
         Office office;
         office = officeRepository.getById(id);
         if (office == null) {
             throw new ApiException("Office with specified ID does not exist");
         }
-        return wrapInView(office);
+        return office;
     }
 
-    public List<ResponseView> list(Long orgId, String name, String phone, Boolean isActive) {
-        Organization organization = organizationRepository.getById(orgId);
+    public List<Office> list(OfficeFilterView request) {
+        Organization organization = organizationRepository.getById(request.getOrgId());
         if (organization == null) {
             throw new ApiException("No organizations with specified id found");
         }
-        List<Office> offices = getOfficeList(organization, name, phone, isActive);
+        List<Office> offices = getOfficeList(organization, request.getName(), request.getPhone(), request.getIsActive());
         if (offices.isEmpty()) {
             throw new ApiException("No offices with specified parameters found");
         } else {
-            List<ResponseView> result = new ArrayList<>();
-            for (Office office : offices) {
-                result.add(new OfficeListingView(
-                        office.getId(),
-                        office.getName(),
-                        office.getIsActive()));
-            }
-            return result;
+            return offices;
         }
     }
 
-    public ResponseView update(Long id, String name, String address, String phone, Boolean isActive) {
-        Office requestedOffice = officeRepository.getById(id);
+    public Boolean update(OfficeUpdateView request) {
+        Office requestedOffice = officeRepository.getById(request.getId());
         if (requestedOffice == null) {
             throw new ApiException("No offices with specified ID found");
         }
-        setData(requestedOffice, name, address, phone, isActive);
+        setData(requestedOffice, request.getName(), request.getAddress(), request.getPhone(), request.getIsActive());
         officeRepository.save(requestedOffice);
-        return new ResultView("success");
+        return true;
     }
 
-    public ResponseView save(Long orgId, String name, String address, String phone, Boolean isActive) {
+    public Boolean save(OfficeSaveView request) {
         Office office = new Office();
-        Organization officeOrganization = organizationRepository.getById(orgId);
+        Organization officeOrganization = organizationRepository.getById(request.getOrgId());
         if (officeOrganization == null) {
             throw new ApiException("No organizations with specified orgId found");
         }
         office.setOrganization(officeOrganization);
-        setData(office, name, address, phone, Objects.requireNonNullElse(isActive,false));
+        setData(office, request.getName(), request.getAddress(), request.getPhone(), Objects.requireNonNullElse(request.getIsActive(), false));
         officeRepository.save(office);
-        return new ResultView("success");
-    }
-
-    private OfficeView wrapInView(Office office) {
-        return new OfficeView(
-                office.getId(),
-                office.getName(),
-                office.getAddress(),
-                office.getPhone(),
-                office.getIsActive());
+        return true;
     }
 
     @SuppressWarnings("Duplicates")

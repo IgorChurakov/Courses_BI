@@ -1,5 +1,8 @@
 package bell.courses.model;
 
+import bell.courses.view.response.OrganizationListingView;
+import bell.courses.view.response.OrganizationView;
+import bell.courses.view.response.ResponseView;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -16,7 +19,7 @@ import javax.persistence.Version;
 @Data
 @Entity(name = "Organization")
 @Table(name = "organization")
-public class Organization {
+public class Organization implements ResponseView {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,4 +49,25 @@ public class Organization {
 
     @Column
     private Boolean isActive;
+
+    @Override
+    public OrganizationView wrapInView() {
+        return new OrganizationView(
+                this.getId(),
+                this.getName(),
+                this.getFullName(),
+                this.getInn(),
+                this.getKpp(),
+                this.getAddress(),
+                this.getPhone(),
+                this.getIsActive());
+    }
+
+    @Override
+    public OrganizationListingView wrapInListView() {
+        return new OrganizationListingView(
+                this.getId(),
+                this.getName(),
+                this.getIsActive());
+    }
 }

@@ -1,7 +1,6 @@
-package bell.courses.view;
+package bell.courses.view.response;
 
-public class OfficeListingView implements ResponseView {
-
+public class OfficeListingView {
     private long id;
     private String name;
     private boolean isActive;

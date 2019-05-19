@@ -5,22 +5,20 @@ import bell.courses.dao.DocTypesRepository;
 import bell.courses.dao.DocumentRepository;
 import bell.courses.dao.OfficeRepository;
 import bell.courses.dao.UserRepository;
+import bell.courses.error.ApiException;
 import bell.courses.model.Countries;
 import bell.courses.model.DocTypes;
 import bell.courses.model.Document;
 import bell.courses.model.Office;
 import bell.courses.model.User;
-import bell.courses.view.ApiException;
-import bell.courses.view.ResponseView;
-import bell.courses.view.ResultView;
-import bell.courses.view.UserListingView;
-import bell.courses.view.UserView;
+import bell.courses.view.request.UserFilterView;
+import bell.courses.view.request.UserSaveView;
+import bell.courses.view.request.UserUpdateView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,137 +52,72 @@ public class UserDataService {
         this.documentRepository = documentRepository;
     }
 
-    public ResponseView get(Long id) {
+    public User get(Long id) {
         User user = userRepository.getById(id);
         if (user == null) {
             throw new ApiException("No user with specified id found");
         } else {
-            String docName = null;
-            String docNumber = null;
-            Date docDate = null;
-            String countryName = null;
-            Integer countryCode = null;
-
-            Document document = user.getDocument();
-            if (document != null){
-                docName = document.getDocType().getName();
-                docNumber = document.getDocNumber();
-                docDate = document.getDocDate();
-            }
-
-            Countries country = user.getCountry();
-            if (country!=null){
-                countryName=country.getName();
-                countryCode=country.getCode();
-            }
-            return new UserView(user.getId(),
-                    user.getFirstName(),
-                    user.getSecondName(),
-                    user.getMiddleName(),
-                    user.getPosition(),
-                    user.getPhone(),
-                    docName,
-                    docNumber,
-                    docDate,
-                    countryName,
-                    countryCode,
-                    user.getIsIdentified());
+            return user;
         }
     }
 
-    public List<ResponseView> list(Long officeId,
-                                   String firstName,
-                                   String secondName,
-                                   String middleName,
-                                   String position,
-                                   Integer docCode,
-                                   Integer citizenshipCode) {
-        List<ResponseView> result = new ArrayList<>();
-        Office office = officeRepository.getById(officeId);
+    public List<User> list(UserFilterView request) {
+        Office office = officeRepository.getById(request.getOfficeId());
         if (office == null) {
             throw new ApiException("Specified office does not exist");
         }
 
-        List<User> users = getUserList(office, firstName, secondName, middleName, position, docCode, citizenshipCode);
+        List<User> users = getUserList(office, request.getFirstName(), request.getSecondName(), request.getMiddleName(), request.getPosition(), request.getDocCode(), request.getCitizenshipCode());
 
-        if (!users.isEmpty()) {
-            for (User user : users) {
-                result.add(new UserListingView(user.getId(),
-                                               user.getFirstName(),
-                                               user.getSecondName(),
-                                               user.getMiddleName(),
-                                               user.getPosition()));
-            }
-        } else {
+        if (users.isEmpty()) {
             throw new ApiException("No users with specified parameters found");
+        } else {
+            return users;
         }
-        return result;
     }
 
-    public ResponseView update(Long id,
-                               Long officeId,
-                               String firstName,
-                               String secondName,
-                               String middleName,
-                               String position,
-                               String phone,
-                               String docName,
-                               String docNumber,
-                               Date docDate,
-                               Integer citizenshipCode,
-                               Boolean isIdentified) {
-        User user = userRepository.getById(id);
+    public Boolean update(UserUpdateView request) {
+        User user = userRepository.getById(request.getId());
         if (user == null) {
             throw new ApiException("No user with specified id found");
         }
         setData(user,
-                officeId,
-                firstName,
-                secondName,
-                middleName,
-                position,
-                phone,
+                request.getOfficeId(),
+                request.getFirstName(),
+                request.getSecondName(),
+                request.getMiddleName(),
+                request.getPosition(),
+                request.getPhone(),
                 Objects.requireNonNullElse(user.getDocument().getDocType().getCode(), null),
-                docName,
-                docNumber,
-                docDate,
-                citizenshipCode,
-                isIdentified);
+                request.getDocName(),
+                request.getDocNumber(),
+                convertDate(request.getDocDate()),
+                request.getCitizenshipCode(),
+                request.getIsIdentified());
         userRepository.save(user);
-        return new ResultView("success");
+        return true;
     }
 
-    public ResponseView save(Long officeId,
-                             String firstName,
-                             String secondName,
-                             String middleName,
-                             String position,
-                             String phone,
-                             Integer docCode,
-                             String docName,
-                             String docNumber,
-                             Date docDate,
-                             Integer citizenshipCode,
-                             Boolean isIdentified) {
+    public Boolean save(UserSaveView request) {
         User user = new User();
         setData(user,
-                officeId,
-                firstName,
-                secondName,
-                middleName,
-                position,
-                phone,
-                docCode,
-                docName,
-                docNumber,
-                docDate,
-                citizenshipCode,
-                isIdentified);
+                request.getOfficeId(),
+                request.getFirstName(),
+                request.getSecondName(),
+                request.getMiddleName(),
+                request.getPosition(),
+                request.getPhone(),
+                request.getDocCode(),
+                request.getDocName(),
+                request.getDocNumber(),
+                convertDate(request.getDocDate()),
+                request.getCitizenshipCode(),
+                request.getIsIdentified());
         if (user.getDocument()!= null) {
             user.setDocument(documentRepository.save(user.getDocument()));
         }
         userRepository.save(user);
-        return new ResultView("success");
+        return true;
     }
 
     private void setData(User user,
@@ -291,5 +224,13 @@ public class UserDataService {
                                                     .and(hasDocType(docCode))
                                                     .and(hasCitizenship(citizenshipCode)));
         return users;
+    }
+
+    private Date convertDate(String date){
+        Date result = null;
+        if (date!=null) {
+            result = Date.valueOf(date);
+        }
+        return result;
     }
 }

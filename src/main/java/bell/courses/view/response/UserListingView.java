@@ -1,7 +1,6 @@
-package bell.courses.view;
+package bell.courses.view.response;
 
-public class UserListingView implements ResponseView {
-
+public class UserListingView {
     private long id;
     private String firstName;
     private String secondName;

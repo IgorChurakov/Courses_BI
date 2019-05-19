@@ -1,7 +1,8 @@
 package bell.courses.controller;
 
+import bell.courses.model.Countries;
+import bell.courses.model.DocTypes;
 import bell.courses.service.CatalogueDataService;
-import bell.courses.view.ResponseView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +22,12 @@ public class CatalogueController {
     }
 
     @GetMapping("/docs")
-    public List<ResponseView> getDocs() {
+    public List<DocTypes> getDocs() {
         return catalogueDataService.listDocs();
     }
 
     @GetMapping("/countries")
-    public List<ResponseView> getCountries() {
+    public List<Countries> getCountries() {
         return catalogueDataService.listCountries();
     }
 }

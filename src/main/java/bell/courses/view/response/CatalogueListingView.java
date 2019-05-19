@@ -1,6 +1,6 @@
-package bell.courses.view;
+package bell.courses.view.response;
 
-public class CatalogueListingView implements ResponseView {
+public class CatalogueListingView {
     private String name;
     private int code;
 

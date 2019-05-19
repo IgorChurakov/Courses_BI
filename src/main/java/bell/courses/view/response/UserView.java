@@ -1,8 +1,8 @@
-package bell.courses.view;
+package bell.courses.view.response;
 
 import java.sql.Date;
 
-public class UserView implements ResponseView {
+public class UserView {
     private long id;
     private String firstName;
     private String secondName;

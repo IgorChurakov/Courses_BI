@@ -1,15 +1,19 @@
 package bell.courses;
 
+import bell.courses.view.request.UserFilterView;
+import bell.courses.view.request.UserSaveView;
+import bell.courses.view.request.UserUpdateView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 
+import static bell.courses.ApiTestSuite.convertToJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,11 +30,14 @@ public class ApiUserTests {
     @Test
     @Transactional
     public void simpleSaveTest() throws Exception {
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("officeId", "1");
-        params.add("firstName", "Test User");
-        params.add("position", "Tester");
-        this.mvc.perform(post("/api/user/save").params(params))
+        UserSaveView request = new UserSaveView();
+        request.setOfficeId((long) 1);
+        request.setFirstName("Test User");
+        request.setPosition("Tester");
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/user/save").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -45,20 +52,23 @@ public class ApiUserTests {
     @Test
     @Transactional
     public void fullSaveTest() throws Exception {
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("officeId", "1");
-        params.add("firstName", "Test Name");
-        params.add("position", "Tester");
-        params.add("secondName", "Test Second Name");
-        params.add("middleName", "Test Middle Name");
-        params.add("phone", "+7-965-63-95");
-        params.add("docCode", "21");
-        params.add("docName", "Russian Passport");
-        params.add("docNumber", "6315 865982");
-        params.add("docDate", "2015-12-23");
-        params.add("citizenshipCode", "643");
-        params.add("isIdentified", "true");
-        this.mvc.perform(post("/api/user/save").params(params))
+        UserSaveView request = new UserSaveView();
+        request.setOfficeId((long) 1);
+        request.setFirstName("Test Name");
+        request.setPosition("Tester");
+        request.setSecondName("Test Second Name");
+        request.setMiddleName("Test Middle Name");
+        request.setPhone("+7-965-63-95");
+        request.setDocCode(21);
+        request.setDocName("Russian Passport");
+        request.setDocNumber("6315 865982");
+        request.setDocDate("2015-12-23");
+        request.setCitizenshipCode(643);
+        request.setIsIdentified(true);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/user/save").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -91,7 +101,12 @@ public class ApiUserTests {
     @Test
     @Transactional
     public void listTest() throws Exception {
-        this.mvc.perform(post("/api/user/list").param("officeId", "3"))
+        UserFilterView request = new UserFilterView();
+        request.setOfficeId((long)3);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/user/list").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value("4"))
                 .andExpect(jsonPath("$.[0].position").value("Director"))
@@ -102,11 +117,14 @@ public class ApiUserTests {
     @Test
     @Transactional
     public void simpleUpdateTest() throws Exception {
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("id", "3");
-        params.add("firstName", "Update Test");
-        params.add("position", "Update Tester");
-        this.mvc.perform(post("/api/user/update").params(params))
+        UserUpdateView request = new UserUpdateView();
+        request.setId((long) 3);
+        request.setFirstName("Update Test");
+        request.setPosition("Update Tester");
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/user/update").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -121,20 +139,23 @@ public class ApiUserTests {
     @Test
     @Transactional
     public void fullUpdateTest() throws Exception {
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("id", "4");
-        params.add("officeId", "1");
-        params.add("firstName", "UTest Name");
-        params.add("secondName", "UTest Second Name");
-        params.add("middleName", "UTest Middle Name");
-        params.add("position", "Update Tester");
-        params.add("phone", "+7-965-63-95");
-        params.add("docName", "Военный билет");
-        params.add("docNumber", "6319 41354138");
-        params.add("docDate", "2019-08-16");
-        params.add("citizenshipCode", "643");
-        params.add("isIdentified", "true");
-        this.mvc.perform(post("/api/user/update").params(params))
+        UserUpdateView request = new UserUpdateView();
+        request.setId((long) 4);
+        request.setOfficeId((long) 1);
+        request.setFirstName("UTest Name");
+        request.setSecondName("UTest Second Name");
+        request.setMiddleName("UTest Middle Name");
+        request.setPosition("Update Tester");
+        request.setPhone("+7-965-63-95");
+        request.setDocName("Военный билет");
+        request.setDocNumber("6319 41354138");
+        request.setDocDate("2019-08-16");
+        request.setCitizenshipCode(643);
+        request.setIsIdentified(true);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/user/update").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {

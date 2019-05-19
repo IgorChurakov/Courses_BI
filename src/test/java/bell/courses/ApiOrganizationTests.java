@@ -1,15 +1,19 @@
 package bell.courses;
 
+import bell.courses.view.request.OrganizationFilterView;
+import bell.courses.view.request.OrganizationSaveView;
+import bell.courses.view.request.OrganizationUpdateView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 
+import static bell.courses.ApiTestSuite.convertToJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,9 +30,12 @@ public class ApiOrganizationTests {
     @Test
     @Transactional
     public void simpleListTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("name","Wonder");
-        this.mvc.perform(post("/api/organization/list").params(params))
+        OrganizationFilterView request = new OrganizationFilterView();
+        request.setName("Wonder");
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/organization/list").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value("2"))
                 .andExpect(jsonPath("$.[0].name").value("World of Wonder"))
@@ -38,11 +45,14 @@ public class ApiOrganizationTests {
     @Test
     @Transactional
     public void fullListTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("name","net");
-        params.add("inn","24135846856461635384");
-        params.add("isActive","true");
-        this.mvc.perform(post("/api/organization/list").params(params))
+        OrganizationFilterView request = new OrganizationFilterView();
+        request.setName("net");
+        request.setInn("24135846856461635384");
+        request.setIsActive(true);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/organization/list").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value("1"))
                 .andExpect(jsonPath("$.[0].name").value("Planet Express"))
@@ -67,13 +77,16 @@ public class ApiOrganizationTests {
     @Test
     @Transactional
     public void simpleSaveTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("name","Test Org");
-        params.add("fullName","Testers Org.");
-        params.add("inn","696969");
-        params.add("kpp","133769");
-        params.add("address","Test Town");
-        this.mvc.perform(post("/api/organization/save").params(params))
+        OrganizationSaveView request = new OrganizationSaveView();
+        request.setName("Test Org");
+        request.setFullName("Testers Org.");
+        request.setInn("696969");
+        request.setKpp("133769");
+        request.setAddress("Test Town");
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/organization/save").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -92,15 +105,18 @@ public class ApiOrganizationTests {
     @Test
     @Transactional
     public void fullSaveTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("name","The Test Org");
-        params.add("fullName","The Testers Org.");
-        params.add("inn","69696969");
-        params.add("kpp","13376969");
-        params.add("address","The Test Town");
-        params.add("phone","+7-965-632-47-89");
-        params.add("isActive","true");
-        this.mvc.perform(post("/api/organization/save").params(params))
+        OrganizationSaveView request = new OrganizationSaveView();
+        request.setName("The Test Org");
+        request.setFullName("The Testers Org.");
+        request.setInn("69696969");
+        request.setKpp("13376969");
+        request.setAddress("The Test Town");
+        request.setPhone("+7-965-632-47-89");
+        request.setIsActive(true);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/organization/save").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -120,15 +136,18 @@ public class ApiOrganizationTests {
     @Test
     @Transactional
     public void simpleUpdateTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("id","2");
-        params.add("name","Test Org");
-        params.add("fullName","Testers Org.");
-        params.add("inn","696969");
-        params.add("kpp","133769");
-        params.add("address","Test Town");
-        params.add("isActive","false");
-        this.mvc.perform(post("/api/organization/update").params(params))
+        OrganizationUpdateView request = new OrganizationUpdateView();
+        request.setId((long)2);
+        request.setName("Test Org");
+        request.setFullName("Testers Org.");
+        request.setInn("696969");
+        request.setKpp("133769");
+        request.setAddress("Test Town");
+        request.setIsActive(false);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/organization/update").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {
@@ -148,16 +167,19 @@ public class ApiOrganizationTests {
     @Test
     @Transactional
     public void fullUpdateTest() throws Exception {
-        LinkedMultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("id","1");
-        params.add("name","The Test Org");
-        params.add("fullName","The Testers Org.");
-        params.add("inn","69696969");
-        params.add("kpp","13376969");
-        params.add("address","The Test Town");
-        params.add("phone","+7-965-632-47-89");
-        params.add("isActive","true");
-        this.mvc.perform(post("/api/organization/update").params(params))
+        OrganizationUpdateView request = new OrganizationUpdateView();
+        request.setId((long)1);
+        request.setName("The Test Org");
+        request.setFullName("The Testers Org.");
+        request.setInn("69696969");
+        request.setKpp("13376969");
+        request.setAddress("The Test Town");
+        request.setPhone("+7-965-632-47-89");
+        request.setIsActive(true);
+
+        String requestJson = convertToJson(request);
+
+        this.mvc.perform(post("/api/organization/update").contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("success"))
                 .andDo(mvcResult -> {

@@ -1,9 +1,9 @@
 package bell.courses.controller;
 
-import bell.courses.view.ApiException;
-import bell.courses.view.ErrorView;
-import bell.courses.view.ResponseView;
+import bell.courses.error.ApiException;
+import bell.courses.view.response.ErrorView;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,18 +14,23 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class ExceptionHandlerController {
 
     @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
-    public ResponseView badRequestException(Exception e) {
+    public ErrorView badRequestException(Exception e) {
         log.warn("Invalid request catched in Controller: {}", e.getMessage());
         return new ErrorView("Bad request: " + e.getMessage());
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorView invalidRequestBodyException(MethodArgumentNotValidException e){
+        return new ErrorView(e.getBindingResult().getFieldError().getDefaultMessage());
+    }
+
     @ExceptionHandler(ApiException.class)
-    public ResponseView apiException(Exception e) {
+    public ErrorView apiException(Exception e) {
         return new ErrorView(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseView unhandledException(Exception e) {
+    public ErrorView unhandledException(Exception e) {
         log.error("response {}", e.getMessage(), e);
         return new ErrorView("Internal Server Error");
     }
