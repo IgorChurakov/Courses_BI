@@ -6,6 +6,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+/**
+ * Validated request view for filtering offices
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Data
 public class OfficeFilterView {
 

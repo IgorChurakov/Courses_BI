@@ -8,6 +8,12 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+/**
+ * Validated request view for saving an user
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Data
 public class UserSaveView {
     @NotNull(message = "Office ID must not be null")

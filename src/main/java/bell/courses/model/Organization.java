@@ -15,7 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-
+/**
+ * Entity for storing Organizations in the database
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Data
 @Entity(name = "Organization")
 @Table(name = "organization")
@@ -50,6 +55,10 @@ public class Organization implements ResponseView {
     @Column
     private Boolean isActive;
 
+    /**
+     * @see ResponseView
+     * @return {@link OrganizationView}
+     */
     @Override
     public OrganizationView wrapInView() {
         return new OrganizationView(
@@ -63,6 +72,10 @@ public class Organization implements ResponseView {
                 this.getIsActive());
     }
 
+    /**
+     * @see ResponseView
+     * @return {@link OrganizationListingView}
+     */
     @Override
     public OrganizationListingView wrapInListView() {
         return new OrganizationListingView(

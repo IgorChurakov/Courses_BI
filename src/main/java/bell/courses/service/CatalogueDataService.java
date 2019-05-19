@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for operating with {@link DocTypes} and {@link Countries} catalogues
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Service
 public class CatalogueDataService {
     private final DocTypesRepository docTypesRepository;
@@ -21,6 +27,10 @@ public class CatalogueDataService {
         this.countriesRepository = countriesRepository;
     }
 
+    /**
+     * Method for getting a list of Document Types
+     * @return List of {@link DocTypes}
+     */
     public List<DocTypes> listDocs() {
         List<DocTypes> docTypes = docTypesRepository.getAllBy();
         if (docTypes.isEmpty()) {
@@ -29,6 +39,10 @@ public class CatalogueDataService {
         return docTypes;
     }
 
+    /**
+     * Method for getting a list of Countries
+     * @return List of {@link Countries}
+     */
     public List<Countries> listCountries() {
         List<Countries> countries = countriesRepository.getAllBy();
         if (countries.isEmpty()) {

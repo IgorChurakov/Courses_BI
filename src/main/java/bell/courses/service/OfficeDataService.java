@@ -8,7 +8,6 @@ import bell.courses.model.Organization;
 import bell.courses.view.request.OfficeFilterView;
 import bell.courses.view.request.OfficeSaveView;
 import bell.courses.view.request.OfficeUpdateView;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,12 @@ import static bell.courses.dao.OfficeRepository.hasOrganization;
 import static bell.courses.dao.OfficeRepository.nameContains;
 import static bell.courses.dao.OfficeRepository.phoneContains;
 
-@Slf4j
+/**
+ * Service for operating with Offices in the database
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Service
 public class OfficeDataService {
 
@@ -34,7 +38,11 @@ public class OfficeDataService {
         this.organizationRepository = organizationRepository;
     }
 
-
+    /**
+     * Method for getting Office by it's ID
+     * @param id Office's ID in the database
+     * @return {@link Office}
+     */
     public Office get(Long id) {
         Office office;
         office = officeRepository.getById(id);
@@ -44,6 +52,11 @@ public class OfficeDataService {
         return office;
     }
 
+    /**
+     * Method for getting list of Offices from the database
+     * @param request {@link OfficeFilterView} with filter params
+     * @return List of {@link Office}
+     */
     public List<Office> list(OfficeFilterView request) {
         Organization organization = organizationRepository.getById(request.getOrgId());
         if (organization == null) {
@@ -57,6 +70,11 @@ public class OfficeDataService {
         }
     }
 
+    /**
+     * Method for updating an Office in the database
+     * @param request {@link OfficeUpdateView}
+     * @return true if successful
+     */
     public Boolean update(OfficeUpdateView request) {
         Office requestedOffice = officeRepository.getById(request.getId());
         if (requestedOffice == null) {
@@ -67,6 +85,11 @@ public class OfficeDataService {
         return true;
     }
 
+    /**
+     * Method for creating a new Office in the database
+     * @param request {@link OfficeSaveView}
+     * @return true if successful
+     */
     public Boolean save(OfficeSaveView request) {
         Office office = new Office();
         Organization officeOrganization = organizationRepository.getById(request.getOrgId());

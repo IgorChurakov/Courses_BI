@@ -18,7 +18,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-
+/**
+ * Entity for storing Offices in the database
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Data
 @Entity(name = "Office")
 @Table(name = "office")
@@ -48,11 +53,19 @@ public class Office implements ResponseView {
     @JoinColumn(name = "org_id")
     private Organization organization;
 
+    /**
+     * @see ResponseView
+     * @return {@link OfficeView}
+     */
     @Override
     public OfficeView wrapInView() {
         return new OfficeView(this.getId(), this.getName(), this.getAddress(), this.getPhone(), this.getIsActive());
     }
 
+    /**
+     * @see ResponseView
+     * @return {@link OfficeListingView}
+     */
     @Override
     public OfficeListingView wrapInListView() {
         return new OfficeListingView(this.getId(),this.getName(),this.getIsActive());

@@ -30,6 +30,12 @@ import static bell.courses.dao.UserRepository.middleNameContains;
 import static bell.courses.dao.UserRepository.positionContains;
 import static bell.courses.dao.UserRepository.secondNameContains;
 
+/**
+ * Service for operating with Users in the database
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Service
 public class UserDataService {
 
@@ -52,6 +58,11 @@ public class UserDataService {
         this.documentRepository = documentRepository;
     }
 
+    /**
+     * Method for getting Office by his ID
+     * @param id User's ID in the database
+     * @return {@link User}
+     */
     public User get(Long id) {
         User user = userRepository.getById(id);
         if (user == null) {
@@ -61,6 +72,11 @@ public class UserDataService {
         }
     }
 
+    /**
+     * Method for getting list of Users from the database
+     * @param request {@link UserFilterView} with filter params
+     * @return List of {@link User}
+     */
     public List<User> list(UserFilterView request) {
         Office office = officeRepository.getById(request.getOfficeId());
         if (office == null) {
@@ -76,6 +92,11 @@ public class UserDataService {
         }
     }
 
+    /**
+     * Method for updating an User in the database
+     * @param request {@link UserUpdateView}
+     * @return true if successful
+     */
     public Boolean update(UserUpdateView request) {
         User user = userRepository.getById(request.getId());
         if (user == null) {
@@ -98,6 +119,11 @@ public class UserDataService {
         return true;
     }
 
+    /**
+     * Method for creating a new User in the database
+     * @param request {@link UserSaveView}
+     * @return true if successful
+     */
     public Boolean save(UserSaveView request) {
         User user = new User();
         setData(user,

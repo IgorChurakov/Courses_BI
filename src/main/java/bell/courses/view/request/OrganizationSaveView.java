@@ -5,6 +5,12 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * Validated request view for saving an organization
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Data
 public class OrganizationSaveView {
 

@@ -16,6 +16,12 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import java.sql.Date;
 
+/**
+ * Entity for storing Documents in the database
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Data
 @Entity(name = "Document")
 @Table(name = "document")

@@ -1,5 +1,14 @@
 package bell.courses.view.response;
 
+import lombok.Data;
+
+/**
+ * Response view for listing organizations
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
+@Data
 public class OrganizationListingView {
     private Long id;
     private String name;
@@ -11,27 +20,11 @@ public class OrganizationListingView {
         this.isActive = isActive;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean getIsActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean active) {
+    public void setIsActive(boolean active) {
         isActive = active;
     }
 }

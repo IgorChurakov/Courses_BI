@@ -6,7 +6,6 @@ import bell.courses.model.Organization;
 import bell.courses.view.request.OrganizationFilterView;
 import bell.courses.view.request.OrganizationSaveView;
 import bell.courses.view.request.OrganizationUpdateView;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,12 @@ import static bell.courses.dao.OrganizationRepository.hasInn;
 import static bell.courses.dao.OrganizationRepository.hasIsActive;
 import static bell.courses.dao.OrganizationRepository.nameContains;
 
-@Slf4j
+/**
+ * Service for operating with Organizations in the database
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Service
 public class OrganizationDataService {
 
@@ -29,6 +33,11 @@ public class OrganizationDataService {
         this.organizationRepository = organizationRepository;
     }
 
+    /**
+     * Method for getting Organization by it's ID
+     * @param id Organization's ID in the database
+     * @return {@link Organization}
+     */
     public Organization get(Long id) {
         Organization organization;
         organization = organizationRepository.getById(id);
@@ -38,6 +47,11 @@ public class OrganizationDataService {
         return organization;
     }
 
+    /**
+     * Method for getting list of Organizations from the database
+     * @param request {@link OrganizationFilterView} with filter params
+     * @return List of {@link Organization}
+     */
     public List<Organization> list(OrganizationFilterView request) {
         List<Organization> organizations = getOrganizationList(request.getName(), request.getInn(), request.getIsActive());
         if (organizations.isEmpty()) {
@@ -47,6 +61,11 @@ public class OrganizationDataService {
         }
     }
 
+    /**
+     * Method for updating an Organization in the database
+     * @param request {@link OrganizationUpdateView}
+     * @return true if successful
+     */
     @SuppressWarnings("Duplicates")
     public Boolean update(OrganizationUpdateView request) {
         Organization requestedOrganization;
@@ -59,6 +78,11 @@ public class OrganizationDataService {
         return true;
     }
 
+    /**
+     * Method for creating a new Organization in the database
+     * @param request {@link OrganizationSaveView}
+     * @return true if successful
+     */
     @SuppressWarnings("Duplicates")
     public Boolean save(OrganizationSaveView request) {
         Organization organization = new Organization();

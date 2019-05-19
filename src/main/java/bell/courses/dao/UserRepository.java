@@ -9,6 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
 
+/**
+ * Repository for operating with {@link User} table; also contains specifications for filtering
+ * @see org.springframework.data.repository.CrudRepository
+ * @see org.springframework.data.jpa.repository.JpaSpecificationExecutor for specifications
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Repository
 public interface UserRepository extends CrudRepository<User,Long>, JpaSpecificationExecutor<User> {
     User getById(Long id);

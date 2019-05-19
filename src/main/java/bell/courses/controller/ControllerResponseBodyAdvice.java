@@ -12,14 +12,34 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Aspect for wrapping various responses in their respective views
+ * @see ResponseBodyAdvice implemented interface for further explanations on advice
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @RestControllerAdvice
 public class ControllerResponseBodyAdvice implements ResponseBodyAdvice {
 
+    /**
+     * @see ResponseBodyAdvice
+     */
     @Override
     public boolean supports(MethodParameter methodParameter, Class aClass) {
         return true;
     }
 
+    /**
+     * Wraps {@link Boolean} instances in {@link ResultView}, {@link List} instances in their respective {@link ResponseView} and {@link ResponseView} in their respective entity views;
+     * @param object controller response
+     * @param methodParameter see {@link ResponseBodyAdvice}
+     * @param mediaType see {@link ResponseBodyAdvice}
+     * @param aClass see {@link ResponseBodyAdvice}
+     * @param serverHttpRequest servlet request, see {@link ResponseBodyAdvice}
+     * @param serverHttpResponse servlet response, see {@link ResponseBodyAdvice}
+     * @return {@link ResultView}, List of {@link ResponseView} or {@link ResponseView}
+     */
     @Override
     public Object beforeBodyWrite(Object object, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
         if (object instanceof Boolean){

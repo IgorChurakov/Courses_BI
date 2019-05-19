@@ -20,7 +20,12 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import java.sql.Date;
 
-
+/**
+ * Entity for storing Users in the database
+ * @since 1.0
+ * @version 1.0
+ * @author Igor Churakov
+ */
 @Data
 @Entity(name = "User")
 @Table(name = "users")
@@ -64,6 +69,10 @@ public class User implements ResponseView {
     @Column(name = "is_identified")
     private Boolean isIdentified;
 
+    /**
+     * @see ResponseView
+     * @return {@link UserView}
+     */
     @Override
     public UserView wrapInView() {
         String docName = null;
@@ -98,6 +107,10 @@ public class User implements ResponseView {
                             this.getIsIdentified());
     }
 
+    /**
+     * @see ResponseView
+     * @return {@link UserListingView}
+     */
     @Override
     public UserListingView wrapInListView() {
         return new UserListingView(this.getId(),
