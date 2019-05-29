@@ -21,10 +21,12 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static bell.courses.dao.UserRepository.firstNameContains;
 import static bell.courses.dao.UserRepository.hasCitizenship;
 import static bell.courses.dao.UserRepository.hasDocType;
+import static bell.courses.dao.UserRepository.hasId;
 import static bell.courses.dao.UserRepository.hasOffice;
 import static bell.courses.dao.UserRepository.middleNameContains;
 import static bell.courses.dao.UserRepository.positionContains;
@@ -64,11 +66,11 @@ public class UserDataService {
      * @return {@link User}
      */
     public User get(Long id) {
-        User user = userRepository.getById(id);
-        if (user == null) {
+        Optional<User> user = userRepository.findOne(Specification.where(hasId(id)));
+        if (user.isEmpty()) {
             throw new ApiException("No user with specified id found");
         } else {
-            return user;
+            return user.get();
         }
     }
 

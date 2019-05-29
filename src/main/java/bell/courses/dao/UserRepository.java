@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.JoinType;
 import java.util.Objects;
 
 /**
@@ -20,6 +21,14 @@ import java.util.Objects;
 @Repository
 public interface UserRepository extends CrudRepository<User,Long>, JpaSpecificationExecutor<User> {
     User getById(Long id);
+
+    static Specification<User> hasId(Long id){
+        return (user, cq, cb) -> {
+            user.fetch("document", JoinType.LEFT).fetch("docType", JoinType.LEFT);
+            user.fetch("country", JoinType.LEFT);
+            return cb.equal(user.get("id"), id);
+        };
+    }
 
     static Specification<User> hasOffice(Office office) {
         return (user, cq, cb) -> cb.equal(user.get("office"), office);
